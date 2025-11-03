@@ -1,3 +1,4 @@
+'''
 MIT License
 
 Copyright (c) 2025 Somayeh Hussaini, Tobias Fischer and Michael Milford
@@ -19,3 +20,42 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+'''
+import os
+import joblib
+import numpy as np
+from sklearn.base import BaseEstimator, ClassifierMixin
+
+
+
+
+def train_dummy_classifier(x_train, y_train, data_path):
+    
+    dummy_clf = ProbabilitySumClassifier()
+    dummy_clf.fit(x_train, y_train)
+    joblib.dump(dummy_clf, os.path.join(data_path, f"dummy_clf.pkl"))
+    
+    return dummy_clf
+
+
+
+
+class ProbabilitySumClassifier(BaseEstimator, ClassifierMixin):
+    def __init__(self):
+        self.class_probs_ = None
+
+    def fit(self, X, y):
+        # Calculate the probability of each class based on y
+        unique_classes, counts = np.unique(y, return_counts=True)
+        self.class_probs_ = counts / len(y)
+        self.classes_ = unique_classes
+        return self
+
+    def predict(self, X):
+        # Predict based on the class probabilities
+        # Assign the class with the highest probability
+        # predictions = np.random.choice(self.classes_, size=len(X), p=self.class_probs_)
+        predictions = np.zeros((len(X))) # always predict the majority class, class 0
+        return predictions
+    
+    
